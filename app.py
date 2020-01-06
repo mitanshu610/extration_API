@@ -98,11 +98,16 @@ def get(search_query):
             data_dict['DOI'].append(ie['doi'])
         except KeyError:
             data_dict['DOI'].append('-')
+
+        try:
             data_dict['Publication_Name'].append(ie['publication_title'])
+        except KeyError:
+            data_dict['Publication_Name'].append('-')
         try:
             data_dict['Publication_Date'].append(ie['publication_date'])
         except KeyError:
             data_dict['Publication_Date'].append('-')
+
         temp = []
         for itr in ie['authors']['authors']:
             temp.append(itr['full_name'])
