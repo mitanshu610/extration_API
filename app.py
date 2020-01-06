@@ -16,14 +16,14 @@ def get(search_query):
     params = {'q': search_query}
     search_query = urllib.parse.urlencode(params)
     search_query = search_query[2:len(search_query)]
-    file_name = 'http://api.springernature.com/metadata/json?q=keyword:' + search_query + '&api_key=7014ed4b31d43e56e2743c3752d0c4c9'
-    file_name_elsevier = 'https://api.elsevier.com/content/search/scopus?query=' + search_query + '&apiKey=a58bb91bfad077e15dbd4fd7835ed3ba'
+    file_name = 'http://api.springernature.com/metadata/json?q=keyword:' + search_query + '&api_key=...'
+    file_name_elsevier = 'https://api.elsevier.com/content/search/scopus?query=' + search_query + '&apiKey=...'
 
     # Search by year: http://api.springernature.com/meta/v2/jats?q=year:2007&api_key=
     # Search by subject: http://api.springernature.com/openaccess/jats?q=subject:Chemistry&api_key=
     # Search by isbn : http://api.springernature.com/metadata/json?q=isbn:978-0-387-79148-7&api_key=
 
-    query = XPLORE('jn52p9296a56tcm2j3tn2768')
+    query = XPLORE('...')
     query.abstractText(temp_query)
     query.dataFormat('json')
 
