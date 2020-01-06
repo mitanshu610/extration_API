@@ -16,14 +16,14 @@ def get(search_query):
     params = {'q': search_query}
     search_query = urllib.parse.urlencode(params)
     search_query = search_query[2:len(search_query)]
-    file_name = 'http://api.springernature.com/metadata/json?q=keyword:' + search_query + '&api_key=...'
-    file_name_elsevier = 'https://api.elsevier.com/content/search/scopus?query=' + search_query + '&apiKey=...'
+    file_name = 'http://api.springernature.com/metadata/json?q=keyword:' + search_query + '&api_key=7014ed4b31d43e56e2743c3752d0c4c9'
+    file_name_elsevier = 'https://api.elsevier.com/content/search/scopus?query=' + search_query + '&apiKey=a58bb91bfad077e15dbd4fd7835ed3ba'
 
     # Search by year: http://api.springernature.com/meta/v2/jats?q=year:2007&api_key=
     # Search by subject: http://api.springernature.com/openaccess/jats?q=subject:Chemistry&api_key=
     # Search by isbn : http://api.springernature.com/metadata/json?q=isbn:978-0-387-79148-7&api_key=
 
-    query = XPLORE('...')
+    query = XPLORE('jn52p9296a56tcm2j3tn2768')
     query.abstractText(temp_query)
     query.dataFormat('json')
 
@@ -39,83 +39,121 @@ def get(search_query):
 
     # elsevier_data
     data_elsevier = json.loads(json_url_elsevier.read())
-
     data_dict = {}
-    data_dict.__setitem__('Title', [])
-    data_dict.update({'DOI': []})
-    data_dict.update({'Author_Name': []})
-    data_dict.update({'Publication_Name': []})
-    data_dict.update({'Publication_Date': []})
-    data_dict.update({'Link': []})
+    data_dict.__setitem__('_Articles', [])
 
+
+    # ELSEVIER
     for els in data_elsevier['search-results']['entry']:
+        sub_dict = {}
+        sub_dict.__setitem__('Title', '')
+        sub_dict.update({'DOI': ''})
+        sub_dict.update({'Author_Name': []})
+        sub_dict.update({'Publication_Name': ''})
+        sub_dict.update({'Publication_Date': ''})
+        sub_dict.update({'Link': ''})
         try:
-            data_dict['Title'].append(els['dc:title'])
+            sub_dict['Title'] = (els['dc:title'])
         except KeyError:
-            data_dict['Title'].append('-')
-
-        try:
-            data_dict['DOI'].append(els['prism:doi'])
-        except KeyError:
-            data_dict['DOI'].append('-')
-
-        try:
-            data_dict['Publication_Name'].append(els['prism:publicationName'])
-        except KeyError:
-            data_dict['Publication_Name'].append('-')
+            sub_dict['Title'] = '-'
 
         try:
-            data_dict['Publication_Date'].append(els['prism:coverDate'])
+            sub_dict['DOI'] = (els['prism:doi'])
         except KeyError:
-            data_dict['Publication_Date'].append('-')
+            sub_dict['DOI'] = '-'
 
         try:
-            data_dict['Title'].append(els['dc:title'])
+            sub_dict['Publication_Name'] = (els['prism:publicationName'])
         except KeyError:
-            data_dict['Title'].append('-')
-
-        data_dict['Author_Name'].append(els['dc:creator'])
+            sub_dict['Publication_Name'] = '-'
 
         try:
-            data_dict['Link'].append(els['link'][2]['@href'])
+            sub_dict['Publication_Date'] = (els['prism:coverDate'])
         except KeyError:
-            data_dict['Link'].append('-')
+            sub_dict['Publication_Date'] = '-'
 
+        try:
+            sub_dict['Title'] = (els['dc:title'])
+        except KeyError:
+            sub_dict['Title'] = '-'
+
+        sub_dict['Author_Name'] = (els['dc:creator'])
+
+        try:
+            sub_dict['Link'] = (els['link'][2]['@href'])
+        except KeyError:
+            sub_dict['Link'] = '-'
+        data_dict['_Articles'].append(sub_dict)
+
+
+    # SPRINGER
     for spr in data_springer['records']:
-        data_dict['Title'].append(spr['title'])
-        data_dict['DOI'].append(spr['doi'])
-        data_dict['Publication_Name'].append(spr['publicationName'])
-        data_dict['Publication_Date'].append(spr['publicationDate'])
-        temp = []
+        sub_dict = {}
+        sub_dict.__setitem__('Title', '')
+        sub_dict.update({'DOI': ''})
+        sub_dict.update({'Author_Name': []})
+        sub_dict.update({'Publication_Name': ''})
+        sub_dict.update({'Publication_Date': ''})
+        sub_dict.update({'Link': ''})
+        try:
+            sub_dict['Title'] = (spr['title'])
+        except KeyError:
+            sub_dict['Title'] = '-'
+
+        try:
+            sub_dict['DOI'] = (spr['doi'])
+        except KeyError:
+            sub_dict['DOI'] = '-'
+        try:
+            sub_dict['Publication_Name'] = (spr['publicationName'])
+        except:
+            sub_dict['Publication_Name'] = '-'
+
+        try:
+            sub_dict['Publication_Date'] = (spr['publicationDate'])
+        except KeyError:
+            sub_dict['Publication_Date'] = '-'
         for j in spr['creators']:
-            temp.append(j['creator'])
-        data_dict['Author_Name'].append(temp)
-        data_dict['Link'].append(spr['url'][0]['value'])
+            sub_dict['Author_Name'].append(j['creator'])
 
+        sub_dict['Link'] = (spr['url'][0]['value'])
+        data_dict['_Articles'].append(sub_dict)
+
+
+    # IEEE
     for ie in data_ieee['articles']:
-        data_dict['Title'].append(ie['title'])
+        sub_dict = {}
+        sub_dict.__setitem__('Title', '')
+        sub_dict.update({'DOI': ''})
+        sub_dict.update({'Author_Name': []})
+        sub_dict.update({'Publication_Name': ''})
+        sub_dict.update({'Publication_Date': ''})
+        sub_dict.update({'Link': ''})
+        sub_dict['Title'] = (ie['title'])
         try:
-            data_dict['DOI'].append(ie['doi'])
+            sub_dict['DOI'] = (ie['doi'])
         except KeyError:
-            data_dict['DOI'].append('-')
+            sub_dict['DOI'] = '-'
 
         try:
-            data_dict['Publication_Name'].append(ie['publication_title'])
+            sub_dict['Publication_Name'] = (ie['publication_title'])
         except KeyError:
-            data_dict['Publication_Name'].append('-')
+            sub_dict['Publication_Name'] = '-'
         try:
-            data_dict['Publication_Date'].append(ie['publication_date'])
+            sub_dict['Publication_Date'] = (ie['publication_date'])
         except KeyError:
-            data_dict['Publication_Date'].append('-')
+            sub_dict['Publication_Date'] = '-'
 
         temp = []
         for itr in ie['authors']['authors']:
-            temp.append(itr['full_name'])
-        data_dict['Author_Name'].append(temp)
+            sub_dict['Author_Name'].append(itr['full_name'])
+
         try:
-            data_dict['Link'].append(ie['html_url'])
+            sub_dict['Link'] = (ie['html_url'])
         except KeyError:
-            data_dict['Link'].append('-')
+            sub_dict['Link'] = '-'
+
+        data_dict['_Articles'].append(sub_dict)
 
     return jsonify(data_dict)
 
